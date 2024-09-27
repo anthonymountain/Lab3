@@ -4,18 +4,17 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
-// TODO CheckStyle: Wrong lexicographical order for 'java.util.HashMap' import (remove this comment once resolved)
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * This class provides the service of converting country codes to their names.
  */
 public class CountryCodeConverter {
-
-    // TODO Task: pick appropriate instance variable(s) to store the data necessary for this class
-
+    
+    private Map<String, String> codeToCountryMap = new HashMap<>();
+    private Map<String, String> countryToCodeMap = new HashMap<>();
     /**
      * Default constructor which will load the country codes from "country-codes.txt"
      * in the resources folder.
@@ -35,7 +34,18 @@ public class CountryCodeConverter {
             List<String> lines = Files.readAllLines(Paths.get(getClass()
                     .getClassLoader().getResource(filename).toURI()));
 
-            // TODO Task: use lines to populate the instance variable(s)
+            for (int i = 1; i < lines.size(); i++) {
+                String line = lines.get(i);
+                String[] parts = line.split("\\t");  // Tab-separated values
+                if (parts.length >= 4) {
+                    String country = parts[0].trim();
+                    String alpha3Code = parts[2].trim();
+
+                    // Populate both maps
+                    codeToCountryMap.put(alpha3Code, country);
+                    countryToCodeMap.put(country, alpha3Code);
+                }
+            }
 
         }
         catch (IOException | URISyntaxException ex) {
